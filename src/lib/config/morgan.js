@@ -1,10 +1,10 @@
 const morgan = require('morgan');
 
-const { envConfig, logger } = require('@lib/config');
+const logger = require('./logger')
+const envConfig = require('./envConfig')
 
 morgan.token('message', (req, res) => res.locals.errorMessage || '');
-
-const getIpFormat = () => (envConfig.env === 'production' ? ':remote-addr - ' : '');
+const getIpFormat = () => (envConfig === 'production' ? ':remote-addr - ' : '');
 const successResponseFormat = `${getIpFormat()}:method :url :status - :response-time ms`;
 const errorResponseFormat = `${getIpFormat()}:method :url :status - :response-time ms - message: :message`;
 
