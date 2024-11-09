@@ -94,6 +94,8 @@ npm run dev (to take advantage of nodemon in develop enviroment)
 5. **Accessing the APIs**:
    - The APIs will be available at `http://localhost:<PORT>`.
 
+6. **Postman Link**:
+    -https://app.getpostman.com/join-team?invite_code=00aa25dbecaf9d1660cb4a025f24c391&target_code=8e5ad4f7d330d9fd3522b1335cdfc630
 ## API Endpoints
 
           |
@@ -159,4 +161,4 @@ patient-management-system
 
 ## Contact
 
-For any inquiries or feedback, feel free to contact [psolanki0004@gmail.com].
+For any inquiries or feedback, feel free to contact psolanki0004@gmail.com.
