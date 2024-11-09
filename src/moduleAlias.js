@@ -6,6 +6,10 @@ const alias = {
     '@lib': `${__dirname}/lib`,
     '@utils': `${__dirname}/lib/utils`,
     '@middlewares': `${__dirname}/lib/middlewares`,
+    '@routes': `${__dirname}/routes`,
+    '@controllers': `${__dirname}/controllers`,
+    '@services': `${__dirname}/services`,
+
 };
 
 moduleAlias.addAliases(alias);
