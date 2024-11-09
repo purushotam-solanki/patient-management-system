@@ -1,9 +1,16 @@
 const mongoose = require('mongoose');
+const paginate = require("mongoose-paginate-v2");
 
 const { appointmentStatus } = require('@src/lib/constant');
 
 const appointmentSchema = mongoose.Schema(
     {
+        appointmentId: {
+            type: String,
+            required: true,
+            index: true,
+            trim: true
+        },
         patient: {
             type: mongoose.SchemaTypes.ObjectId,
             ref: 'user',
@@ -16,20 +23,35 @@ const appointmentSchema = mongoose.Schema(
             required: true,
             index: true
         },
-        appointementAt: {
-            type: Date(),
-            required: true
+        scheduledAt: {
+            date: {
+                type: Date,
+                required: true
+            },
+            time: {
+                type: String
+            }
         },
         status: {
             type: String,
             required: true,
-            enum: Object.values(appointmentStatus)
+            enum: Object.values(appointmentStatus),
+            default: appointmentStatus.PENDING
+        },
+        createdBy: {
+            type: mongoose.SchemaTypes.ObjectId,
+            ref: 'user',
+            required: true,
+            index: true
         }
     },
     {
         timestamps: true,
     }
 );
+
+//Plugins
+appointmentSchema.plugin(paginate)
 
 const AppointmentModel = mongoose.model('appointment_schema', appointmentSchema);
 

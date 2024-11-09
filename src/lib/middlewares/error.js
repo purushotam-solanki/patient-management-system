@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const httpStatus = require('http-status');
+const httpStatus = require('http-status')
 
 const ApiError = require('@utils/ApiError');
 const { envConfig, logger } = require('@lib/config');
@@ -35,7 +35,7 @@ const errorHandler = (err, req, res, next) => {
     logger.error(err);
   }
 
-  res.status(statusCode).send(response);
+  res.status(statusCode).json(response);
 };
 
 module.exports = {
