@@ -82,6 +82,11 @@ const userSchema = mongoose.Schema(
             type: mongoose.SchemaTypes.ObjectId,
             ref: 'user',
             index: true
+        },
+        updatedBy: {
+            type: mongoose.SchemaTypes.ObjectId,
+            ref: 'user',
+            index: true
         }
     },
     {
@@ -112,6 +117,6 @@ userSchema.statics.isPhoneNumberTaken = async function (phoneNumber, excludeUser
 /**
  * @typedef User
  */
-const UserModel = mongoose.model('User', userSchema);
+const UserModel = mongoose.model('user', userSchema);
 
 module.exports = UserModel;

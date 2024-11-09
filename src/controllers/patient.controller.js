@@ -39,7 +39,7 @@ const getPatientById = catchAsync(async (req, res) => {
     const patient = await patientService.getPatientById(req.params.patientId);
     if (!patient) {
         return res.status(404).json({
-            message: "Appointment not found.",
+            message: "Patient not found.",
             data: null
         })
     }
@@ -49,8 +49,28 @@ const getPatientById = catchAsync(async (req, res) => {
     })
 });
 
+const updatePatient = catchAsync(async (req, res) => {
+    const admin = req.user || {}
+    const patientId = req.params.patientId
+    const updatedDetails = req.body;
+    updatedDetails.updatedBy = admin?._id
+    const patient = await patientService.updatePatient(patientId, updatedDetails);
+    if (!patient) {
+        return res.status(httpStatus.NOT_FOUND).json({
+            message: "Patient not found.",
+            data: null
+        })
+    };
+    return res.status(httpStatus.OK).json({
+        message: "Details updated successfully.",
+        data: patient
+    })
+
+});
+
 module.exports = {
     createPatient,
     getAllPatients,
-    getPatientById
+    getPatientById,
+    updatePatient
 }

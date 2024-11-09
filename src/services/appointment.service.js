@@ -1,7 +1,18 @@
+const httpStatus = require("http-status");
+
 const { ApiError } = require("@src/lib/utils");
-const { AppointmentModel } = require("@src/models");
+const { AppointmentModel, UserModel } = require("@src/models");
 
 const createAppointment = async (data = {}) => {
+    /**
+     * Addning validation to check that if doctor exists in our system or not
+     * to avoid abuse of system and to maintain the consistency of data to make sure that 
+     * no appointment exists without doctor
+     */
+    const doctor = await UserModel.findById(data.doctor, { _id: 1 }).lean()
+    if (!doctor) {
+        throw new ApiError(httpStatus.BAD_REQUEST, "Doctor not found.")
+    }
     return await AppointmentModel.create(data)
 };
 
@@ -23,9 +34,42 @@ const deleteAppointment = async (filter = {}) => {
     //NOTE: Patient/Admin can delete mul
     return AppointmentModel.deleteOne(filter)
 }
+
+const updateAppointment = async (appointmentId = "", updatedDetails = {}) => {
+    try {
+        const projection = {
+            otpDetails: 0,
+            statusHistory: 0
+        };
+        const data = await AppointmentModel.findOneAndUpdate(
+            { _id: appointmentId },
+            {
+                $set: updatedDetails
+            },
+            {
+                new: true,
+                runValidators: true,
+                projection: { statusHistory: 0, otpDetails: 0 }
+            }).populate([
+                {
+                    path: "doctor",
+                    select: projection
+                },
+                {
+                    path: "patient",
+                    select: projection
+                }
+            ]);
+        return data
+    } catch (e) {
+        throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Error in updating details.")
+    }
+}
+
 module.exports = {
     createAppointment,
     getAllAppointments,
     getAppointmentById,
-    deleteAppointment
+    deleteAppointment,
+    updateAppointment
 }

@@ -43,6 +43,11 @@ const appointmentSchema = mongoose.Schema(
             ref: 'user',
             required: true,
             index: true
+        },
+        updatedBy: {
+            type: mongoose.SchemaTypes.ObjectId,
+            ref: 'user',
+            index: true
         }
     },
     {
@@ -53,6 +58,6 @@ const appointmentSchema = mongoose.Schema(
 //Plugins
 appointmentSchema.plugin(paginate)
 
-const AppointmentModel = mongoose.model('appointment_schema', appointmentSchema);
+const AppointmentModel = mongoose.model('appointment', appointmentSchema);
 
 module.exports = AppointmentModel;

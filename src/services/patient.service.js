@@ -30,8 +30,27 @@ const getPatientById = async (patientId = "") => {
     return await UserModel.findOne({ _id: patientId, role: roles.PATIENT })
 };
 
+const updatePatient = async (patientId = "", updatedDetails = {}) => {
+    try {
+        const data = await UserModel.findOneAndUpdate(
+            { _id: patientId },
+            {
+                $set: updatedDetails
+            },
+            {
+                new: true,
+                runValidators: true,
+                projection: { statusHistory: 0, otpDetails: 0 }
+            });
+        return data
+    } catch (e) {
+        throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Error in updating details.")
+    }
+}
+
 module.exports = {
     createPatient,
     getAllPatients,
-    getPatientById
+    getPatientById,
+    updatePatient
 }

@@ -1,5 +1,8 @@
+const httpStatus = require("http-status");
+
 const { roles } = require("@src/lib/constant");
 const { catchAsync, generateId, pick } = require("@src/lib/utils");
+const { AppointmentModel } = require("@src/models");
 const appointmentService = require('@src/services/appointment.service');
 
 const create = catchAsync(async (req, res) => {
@@ -61,11 +64,69 @@ const deleteAppointmentById = catchAsync(async (req, res) => {
         data: null
     })
 });
+/**
+ * As of now all roles can udpate the same fields in appointments,
+ * In future if there comes a situation, where every role can update the appointments details
+ * seprately, then we will need to declare seprate route and needs to the req body validion seprately
+ * to acheive sepratio of concern.
+ */
+const updateAppointment = catchAsync(async (req, res) => {
+    const user = req.user || {}
+    const { role } = user || {}
+    const appointmentId = req.params.appointmentId
+    const updatedDetails = req.body;
+    updatedDetails.updatedBy = user?._id
+    /**
+     * Validation to make sure that one patient don't transfer his/her appointment
+     *  to another patient i.e any relative
+     */
+    if (role == roles.PATIENT && updatedDetails.patient != user?._id.toString()) {
+        return res.status(httpStatus.BAD_REQUEST).json({
+            message: "Appointment is not transferable."
+        });
+    }
+    /**
+     * Checking if particular appointment belongs to that pateint/doctor or not
+     */
+    if ([roles.DOCTOR, roles.PATIENT].includes(role)) {
+        let filter = {};
+        if (role == roles.PATIENT) {
+            filter.patient = user?._id
+        } else {
+            filter.doctor = user?._id
+        }
+        const existingAppointment = await AppointmentModel.findOne(filter, { _id: 1 }).lean();
+        if (!existingAppointment) {
+            return res.status(httpStatus.NOT_FOUND).json({
+                messsage: "Appointment details not found.",
+                data: null
+            })
+        }
+    }
+    /**
+     * TODO: Add validation for doctor also so that no doctor can change his patient
+     * and to avoid the misuse of system by doctor
+     */
+
+    const appointment = await appointmentService.updateAppointment(appointmentId, updatedDetails);
+    if (!appointment) {
+        return res.status(httpStatus.NOT_FOUND).json({
+            message: "Patient not found.",
+            data: null
+        })
+    };
+    return res.status(httpStatus.OK).json({
+        message: "Details updated successfully.",
+        data: appointment
+    })
+
+});
 
 module.exports = {
     create,
     getAllAppointments,
     getMyAppointments,
     getAppointmentById,
-    deleteAppointmentById
+    deleteAppointmentById,
+    updateAppointment
 }
