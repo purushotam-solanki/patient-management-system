@@ -13,6 +13,7 @@ const cookieParser = require('cookie-parser')
 const { envFlag, cors: { corsOptions }, passport: { jwtStrategy } } = require('@lib/config');
 const { error: { errorConverter, errorHandler }, slowloris } = require('@lib/middlewares');
 const { ApiError } = require('@utils');
+const routes = require('./routes/v1')
 
 const app = express();
 
@@ -56,6 +57,7 @@ app.get("/api", (req, res) => {
     res.send("EndPoints are ready to Serve!!")
 })
 
+app.use("/api/v1", routes)
 // send back a 404 error for any unknown api request
 app.use((req, res, next) => {
     console.log(`404-${req.originalUrl}`)

@@ -11,6 +11,13 @@
       "@utils": [
         "src/lib/utils/*"
       ],
+      "@controllers": [
+        "src/controllers/*"
+      ],
+      "@services": [
+        "src/services/*"
+      ],
+      
     }
   },
   "exclude": [
