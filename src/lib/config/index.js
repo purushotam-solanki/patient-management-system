@@ -4,5 +4,6 @@ module.exports = {
     passport: require('./passport'),
     envConfig: require('./envConfig'),
     morgan: require('./morgan'),
-    logger: require('./logger')
+    logger: require('./logger'),
+    cookies: require('./cookies')
 }

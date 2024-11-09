@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
-const bcrypt = require('bcryptjs');
+const paginate = require("mongoose-paginate-v2")
 
-const { roles, registrationSource, userStatus } = require('@lib/constant');
+const { roles, userStatus } = require('@lib/constant');
 
 const userSchema = mongoose.Schema(
     {
@@ -13,7 +13,6 @@ const userSchema = mongoose.Schema(
         },
         email: {
             type: String,
-            required: true,
             unique: true,
             trim: true,
             lowercase: true,
@@ -31,11 +30,6 @@ const userSchema = mongoose.Schema(
         profilePic: {
             type: String
         },
-        source: {
-            type: String,
-            enum: Object.values(registrationSource),
-            private: true
-        },
         phoneNumber: {
             countryCode: {
                 type: String,
@@ -45,22 +39,21 @@ const userSchema = mongoose.Schema(
                 type: String,
                 unique: true,
                 required: true,
-                index: true,
-
+                index: true
             }
-        },
-        TnC: {
-            type: Boolean,
-            required: true,
-            private: true
         },
         userId: {
             type: String,
             unique: true,
             index: true,
         },
-        otp: {
-            type: Number
+        otpDetails: {
+            otp: {
+                type: Number
+            },
+            expAt: {
+                type: Number
+            }
         },
         status: {
             type: String,
@@ -84,12 +77,20 @@ const userSchema = mongoose.Schema(
                 type: Date
             },
 
-        }]
+        }],
+        createdBy: {
+            type: mongoose.SchemaTypes.ObjectId,
+            ref: 'user',
+            index: true
+        }
     },
     {
         timestamps: true,
     }
 );
+
+//Plugins
+userSchema.plugin(paginate);
 
 /**
  * Check if email is taken
@@ -107,24 +108,6 @@ userSchema.statics.isPhoneNumberTaken = async function (phoneNumber, excludeUser
     const user = await this.findOne({ "phoneNumber.number": phoneNumber, _id: { $ne: excludeUserId } });
     return !!user;
 };
-
-/**
- * Check if password matches the user's password
- * @param {string} password
- * @returns {Promise<boolean>}
- */
-userSchema.methods.isPasswordMatch = async function (password) {
-    const user = this;
-    return await bcrypt.compare(password, user.password);
-};
-
-userSchema.pre('save', async function (next) {
-    const user = this;
-    if (user.isModified('password')) {
-        user.password = await bcrypt.hash(user.password, Number(process.env.PASSWORD_SALT_FACTOR));
-    }
-    next();
-});
 
 /**
  * @typedef User

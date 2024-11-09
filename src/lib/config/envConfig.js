@@ -14,6 +14,8 @@ const envVarsSchema = Joi.object()
     DOCTOR_JWT_REFRESH_TOKEN_SECRET: Joi.string().required().description('JWT  refresh secret key'),
     PATIENT_JWT_ACCESS_TOKEN_SECRET: Joi.string().required().description('JWT access secret key'),
     PATIENT_JWT_REFRESH_TOKEN_SECRET: Joi.string().required().description('JWT  refresh secret key'),
+    LOGIN_OTP_EXP_MINUTES: Joi.string().required().description("Login OTP expiration minutes"),
+    TRANSMIT_COOKIE_OVER_SECURE_NETWORK: Joi.boolean().required().description("cookie option")
   })
   .unknown();
 
@@ -39,5 +41,11 @@ module.exports = {
     patientAccessTokenSecret: envVars.PATIENT_JWT_ACCESS_TOKEN_SECRET,
     patientRefreshTokenSecret: envVars.PATIENT_JWT_REFRESH_TOKEN_SECRET,
   },
+  otpexpMinutes: {
+    login: envVars.LOGIN_OTP_EXP_MINUTES
+  },
+  cookieOptions: {
+    secure: envVars.TRANSMIT_COOKIE_OVER_SECURE_NETWORK
+  }
 
 };
