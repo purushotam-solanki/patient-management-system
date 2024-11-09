@@ -3,18 +3,27 @@ const httpStatus = require('http-status');
 
 const ApiError = require('@utils/ApiError');
 const { roles, userStatus } = require('@lib/constant');
+const { adminPermissions, doctorPermissions, patientPermissions } = require('../permissions');
 
 const verifyCallback = (req, resolve, reject, requiredRights) => async (err, user = {}, info) => {
   if (err || info || !user) {
     return reject(new ApiError(httpStatus.UNAUTHORIZED, 'Please authenticate'));
   }
   req.user = user;
-  if (user?.status !== userStatus.ACTIVE) {
+  const { role, status } = user || {}
+  if (status !== userStatus.ACTIVE) {
     return reject(new ApiError(httpStatus.FORBIDDEN, 'Forbidden'));
   }
   if (requiredRights.length) {
-    const userRights = roles?.roleRights.get(user.role);
-    const hasRequiredRights = requiredRights.every((requiredRight) => userRights.includes(requiredRight));
+    let userRights = null;
+    if (role == roles.ADMIN) {
+      userRights = Object.values(adminPermissions)
+    } else if (role == roles.DOCTOR) {
+      userRights = Object.values(doctorPermissions)
+    } else {
+      userRights = Object.values(patientPermissions)
+    }
+    const hasRequiredRights = requiredRights.some((requiredRight) => userRights.includes(requiredRight));
     if (!hasRequiredRights) {
       return reject(new ApiError(httpStatus.FORBIDDEN, 'Forbidden'));
     }
@@ -22,7 +31,7 @@ const verifyCallback = (req, resolve, reject, requiredRights) => async (err, use
   resolve();
 };
 
-const auth = (...requiredRights) => async (req, res, next) => {
+const authAny = (...requiredRights) => async (req, res, next) => {
   const validateTokenAndPermissions = new Promise((resolve, reject) => {
     passport.authenticate('jwt', { session: false }, verifyCallback(req, resolve, reject, requiredRights))(req, res, next);
   })
@@ -32,4 +41,4 @@ const auth = (...requiredRights) => async (req, res, next) => {
     .catch((err) => next(err));
 };
 
-module.exports = auth;
+module.exports = authAny;

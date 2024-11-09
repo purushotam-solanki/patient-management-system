@@ -40,6 +40,15 @@ module.exports = {
 
     patientAccessTokenSecret: envVars.PATIENT_JWT_ACCESS_TOKEN_SECRET,
     patientRefreshTokenSecret: envVars.PATIENT_JWT_REFRESH_TOKEN_SECRET,
+
+    adminAccessExpirationMinutes: envVars.ADMIN_JWT_ACCESS_EXPIRATION_MINUTES,
+    adminRefreshExpirationDays: envVars.ADMIN_JWT_REFRESH_EXPIRATION_DAYS,
+
+    doctorAccessExpirationMinutes: envVars.DOCTOR_JWT_ACCESS_EXPIRATION_MINUTES,
+    doctorRefreshExpirationDays: envVars.DOCTOR_JWT_REFRESH_EXPIRATION_DAYS,
+
+    patientAccessExpirationMinutes: envVars.PATIENT_JWT_ACCESS_EXPIRATION_MINUTES,
+    patientRefreshExpirationDays: envVars.PATIENT_JWT_REFRESH_EXPIRATION_DAYS,
   },
   otpexpMinutes: {
     login: envVars.LOGIN_OTP_EXP_MINUTES

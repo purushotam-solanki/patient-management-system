@@ -9,11 +9,13 @@ const cors = require('cors');
 const passport = require('passport');
 const httpStatus = require('http-status');
 const cookieParser = require('cookie-parser')
+const jwt = require('jsonwebtoken')
 
 const { envFlag, cors: { corsOptions }, passport: { jwtStrategy } } = require('@lib/config');
 const { error: { errorConverter, errorHandler }, slowloris } = require('@lib/middlewares');
 const { ApiError } = require('@utils');
-const routes = require('./routes/v1')
+const routes = require('./routes/v1');
+const { authTokenTypes, authTokenCookiesKeys } = require('./lib/constant');
 
 const app = express();
 
@@ -38,6 +40,12 @@ app.use(compression());
 // Enable CORS 
 app.use(cors(corsOptions));
 
+// Decoding the JWT token without verifying to get the payload
+app.use((req, res, next) => {
+    const rawJwtToken = req.cookies[authTokenCookiesKeys.ACCESS_TOKEN]
+    req.decodedToken = jwt.decode(rawJwtToken, { complete: true });
+    next()
+});
 
 // jwt authentication
 app.use(passport.initialize());
