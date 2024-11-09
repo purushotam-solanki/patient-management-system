@@ -24,18 +24,6 @@ const userSchema = mongoose.Schema(
                 }
             },
         },
-        // password: {
-        //     type: String,
-        //     required: true,
-        //     trim: true,
-        //     minlength: 8,
-        //     validate(value) {
-        //         if (!value.match(/\d/) || !value.match(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*`~"()_+\-=[\]{};:'\\|,.<>/?])[A-Za-z\d!@#$%^&*`~"()_+\-=[\]{};:'\\|,.<>/?]{8,}$/)) {
-        //             throw new Error('Password must contain at least one uppercase, one lowercase, a special character and minimum 8 characters');
-        //         }
-        //     },
-        //     private: true, // used by the toJSON plugin
-        // },
         role: {
             type: String,
             enum: Object.values(roles),
@@ -61,12 +49,6 @@ const userSchema = mongoose.Schema(
 
             }
         },
-        /*Aceess tokens which is issued before this time will be treated as invalid token
-        This time will be updated whenever user resets his/her password */
-        pwdChangedAt: {
-            type: Date,
-            private: true
-        },
         TnC: {
             type: Boolean,
             required: true,
@@ -76,6 +58,9 @@ const userSchema = mongoose.Schema(
             type: String,
             unique: true,
             index: true,
+        },
+        otp: {
+            type: Number
         },
         status: {
             type: String,
