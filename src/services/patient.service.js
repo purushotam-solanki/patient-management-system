@@ -1,6 +1,6 @@
 const { roles } = require("@src/lib/constant");
 const { ApiError } = require("@src/lib/utils");
-const { UserModel } = require("@src/models");
+const { UserModel, AppointmentModel } = require("@src/models");
 const httpStatus = require("http-status");
 
 const createPatient = async (data = {}) => {
@@ -19,15 +19,23 @@ const createPatient = async (data = {}) => {
 };
 
 const getAllPatients = async (filter = {}, options) => {
-    filter.role = roles.PATIENT
-    options.lean = true
-    options.collation = { locale: 'en' }
-    // options.select =""
-    return await UserModel.paginate(filter, options)
+    try {
+        filter.role = roles.PATIENT
+        options.lean = true
+        options.collation = { locale: 'en' }
+        // options.select =""
+        return await UserModel.paginate(filter, options)
+    } catch (e) {
+        throw new Error(e)
+    }
 }
 
 const getPatientById = async (patientId = "") => {
-    return await UserModel.findOne({ _id: patientId, role: roles.PATIENT })
+    try {
+        return await UserModel.findOne({ _id: patientId, role: roles.PATIENT })
+    } catch (e) {
+        throw new Error(e)
+    }
 };
 
 const updatePatient = async (patientId = "", updatedDetails = {}) => {
@@ -48,9 +56,27 @@ const updatePatient = async (patientId = "", updatedDetails = {}) => {
     }
 }
 
+const getDoctorPatients = async (filter = {}, options = {}) => {
+    try {
+        options.populate = [
+            {
+                path: "patient"
+            }
+        ]
+        options.select = {
+            patient: 1
+        }
+        const patients = await AppointmentModel.paginate(filter, options);
+        return patients
+    } catch (e) {
+        throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Error occured.")
+    }
+}
+
 module.exports = {
     createPatient,
     getAllPatients,
     getPatientById,
-    updatePatient
+    updatePatient,
+    getDoctorPatients
 }

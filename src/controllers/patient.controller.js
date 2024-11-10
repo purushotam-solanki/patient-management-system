@@ -3,6 +3,7 @@ const httpStatus = require('http-status')
 const { catchAsync, generateId, pick } = require("@lib/utils");
 const { roles } = require('@src/lib/constant');
 const patientService = require('@src/services/patient.service');
+const { AppointmentModel } = require('@src/models');
 
 const createPatient = catchAsync(async (req, res, next) => {
     const patientDetails = {
@@ -27,6 +28,7 @@ const getDoctorPatients = catchAsync(async (req, res) => {
 
 const getAllPatients = catchAsync(async (req, res) => {
     const options = pick(req.query, ['limit', 'page']);
+    //TODO: Needs to implement search fucntionality
     const filter = pick(req.query, ['search']);
     const patients = await patientService.getAllPatients(filter, options);
     return res.status(200).json({
@@ -68,9 +70,23 @@ const updatePatient = catchAsync(async (req, res) => {
 
 });
 
+const getDoctorsPatients = catchAsync(async (req, res) => {
+    const doctor = req.user || {}
+    const options = pick(req.query, ['limit', 'page']);
+    //TODO: Needs to implement search fucntionality
+    const filter = pick(req.query, ['search']);
+    filter.doctor = doctor?._id
+    const patients = await patientService.getDoctorPatients(filter, options);
+    return res.status(httpStatus.OK).json({
+        message: "fetched successfully.",
+        data: patients
+    })
+});
+
 module.exports = {
     createPatient,
     getAllPatients,
     getPatientById,
-    updatePatient
+    updatePatient,
+    getDoctorsPatients
 }

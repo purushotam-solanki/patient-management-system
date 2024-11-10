@@ -14,8 +14,15 @@ router.
     .get(authAny(adminPermissions.MANAGE_ALL_PATIENT), controller.getAllPatients)
 
 router.
+    route('/doctor-patients')
+    .get(
+        authAny(doctorPermissions.MANAGE_MY_PATIENT),
+        controller.getDoctorsPatients
+    )
+
+router.
     route('/:patientId')
-    .get(controller.getPatientById)
+    .get(authAny(), controller.getPatientById)
     .patch(authAny(adminPermissions.MANAGE_ALL_PATIENT), validate(patientReqValidations.updatePatient), controller.updatePatient)
 
 module.exports = router

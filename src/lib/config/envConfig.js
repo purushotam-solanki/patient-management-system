@@ -35,7 +35,7 @@ module.exports = {
     adminAccessTokenSecret: envVars.ADMIN_JWT_ACCESS_TOKEN_SECRET,
     adminRefreshTokenSecret: envVars.ADMIN_JWT_REFRESH_TOKEN_SECRET,
 
-    doctorAccessTokenSecret: envVars.DCOTOR_JWT_ACCESS_TOKEN_SECRET,
+    doctorAccessTokenSecret: envVars.DOCTOR_JWT_ACCESS_TOKEN_SECRET,
     doctorRefreshTokenSecret: envVars.DOCTOR_JWT_REFRESH_TOKEN_SECRET,
 
     patientAccessTokenSecret: envVars.PATIENT_JWT_ACCESS_TOKEN_SECRET,
